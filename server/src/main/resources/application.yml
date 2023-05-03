@@ -1,0 +1,16 @@
+server:
+  port: 8088
+
+spring:
+  redis:
+    host: 192.168.123.88
+    port: 6379
+
+swagger:
+  enable: true
+
+oss:
+  minio:
+    endpoint: http://192.168.123.88:9000
+    accessKey: admin
+    secretKey: 12345678
