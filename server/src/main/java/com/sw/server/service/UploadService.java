@@ -2,9 +2,9 @@ package com.sw.server.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sw.server.pojo.FileUploadInfo;
-import io.minio.ListPartsResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,8 +35,9 @@ public interface UploadService {
      *
      * @param sha256 String
      * @return
+     * @throws JsonProcessingException
      */
-    ListPartsResponse getByFileSha256(String sha256) throws JsonProcessingException;
+    List<Integer> getByFileSha256(String sha256) throws JsonProcessingException;
 
     /**
      * 获取文件地址

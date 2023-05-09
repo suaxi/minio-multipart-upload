@@ -176,7 +176,7 @@ public class MinioUtils {
             fileUploadInfo.setUploadId(uploadId);
 
             //redis保存文件信息
-            redisUtils.set(fileUploadInfo.getMd5(), objectMapper.writeValueAsString(fileUploadInfo), 30, TimeUnit.MINUTES);
+            redisUtils.set(fileUploadInfo.getFileMd5(), objectMapper.writeValueAsString(fileUploadInfo), 30, TimeUnit.MINUTES);
 
             List<String> partList = new ArrayList<>();
             Map<String, String> reqParams = new HashMap<>(2);

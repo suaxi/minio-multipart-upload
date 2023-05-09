@@ -8,11 +8,15 @@ import com.sw.server.service.UploadService;
 import com.sw.server.utils.MinioUtils;
 import com.sw.server.utils.RedisUtils;
 import io.minio.ListPartsResponse;
+import io.minio.messages.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Wang Hao
@@ -47,17 +51,19 @@ public class UploadServiceImpl implements UploadService {
     }
 
     @Override
-    public ListPartsResponse getByFileSha256(String sha256) throws JsonProcessingException {
+    public List<Integer> getByFileSha256(String sha256) throws JsonProcessingException {
         Object obj = redisUtils.get(sha256);
         FileUploadInfo fileUploadInfo = null;
-        if (obj == null) {
-            return null;
-        } else {
+        if (obj != null) {
             fileUploadInfo = objectMapper.readValue(objectMapper.writeValueAsString(obj), new TypeReference<FileUploadInfo>() {
             });
         }
+        if (fileUploadInfo == null) {
+            return Collections.emptyList();
+        }
         String bucketName = minioUtils.createBucket(fileUploadInfo.getFileType());
-        return minioUtils.getByFileSha256(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
+        ListPartsResponse listPartsResponse = minioUtils.getByFileSha256(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
+        return listPartsResponse.result().partList().stream().map(Part::partNumber).collect(Collectors.toList());
     }
 
     @Override

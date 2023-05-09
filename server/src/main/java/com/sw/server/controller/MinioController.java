@@ -35,7 +35,7 @@ public class MinioController {
 
     @GetMapping("/check")
     @ApiOperation("根据md5查询文件")
-    public ResponseEntity<?> checkFileUploadedByMd5(@RequestParam("md5") String md5) throws JsonProcessingException {
+    public ResponseEntity<List<Integer>> checkFileUploadedByMd5(@RequestParam("md5") String md5) throws JsonProcessingException {
         if (StringUtils.isEmpty(md5)) {
             throw new IllegalArgumentException("md5不能为空！");
         }

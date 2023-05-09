@@ -30,7 +30,7 @@ public class FileUploadInfo implements Serializable {
     private String uploadId;
 
     @ApiModelProperty("md5")
-    private String md5;
+    private String fileMd5;
 
     @ApiModelProperty("文件类型")
     private String fileType;
