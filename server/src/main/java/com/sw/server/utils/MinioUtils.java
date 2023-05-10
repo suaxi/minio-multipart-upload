@@ -37,6 +37,9 @@ public class MinioUtils {
     @Value(value = "${oss.minio.endpoint}")
     private String endpoint;
 
+    @Value(value = "${oss.minio.bucket}")
+    private String bucket;
+
     @Value(value = "${oss.minio.accessKey}")
     private String accessKey;
 
@@ -66,16 +69,16 @@ public class MinioUtils {
      *
      * @return
      */
-    public String createBucket(String bucketName) {
+    public String createBucket() {
         try {
-            BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(bucketName).build();
+            BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(bucket).build();
             //如果桶存在
             if (customMinioClient.bucketExists(bucketExistsArgs)) {
-                return bucketName;
+                return bucket;
             }
-            MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder().bucket(bucketName).build();
+            MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder().bucket(bucket).build();
             customMinioClient.makeBucket(makeBucketArgs);
-            return bucketName;
+            return bucket;
         } catch (Exception e) {
             log.error("创建桶失败：{}", e.getMessage());
             throw new RuntimeException(e);

@@ -36,7 +36,7 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     public Map<String, Object> initMultiPartUpload(FileUploadInfo fileUploadInfo) {
-        String bucketName = minioUtils.createBucket(fileUploadInfo.getFileType());
+        String bucketName = minioUtils.createBucket();
         if (fileUploadInfo.getPartCount() == 1) {
             return minioUtils.getUploadObjectUrl(fileUploadInfo.getFileName(), bucketName);
         } else {
@@ -46,7 +46,7 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     public boolean mergeMultipartUpload(FileUploadInfo fileUploadInfo) {
-        String bucketName = minioUtils.createBucket(fileUploadInfo.getFileType());
+        String bucketName = minioUtils.createBucket();
         return minioUtils.mergeMultipartUpload(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
     }
 
@@ -61,7 +61,7 @@ public class UploadServiceImpl implements UploadService {
         if (fileUploadInfo == null) {
             return Collections.emptyList();
         }
-        String bucketName = minioUtils.createBucket(fileUploadInfo.getFileType());
+        String bucketName = minioUtils.createBucket();
         ListPartsResponse listPartsResponse = minioUtils.getByFileSha256(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
         return listPartsResponse.result().partList().stream().map(Part::partNumber).collect(Collectors.toList());
     }

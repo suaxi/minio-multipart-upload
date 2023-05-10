@@ -75,9 +75,9 @@ public class MinioController {
     }
 
 
-    @PostMapping("/create/{bucketName}")
+    @PostMapping("/createBucket")
     @ApiOperation("创建桶")
-    public ResponseEntity<String> createBucket(@PathVariable("bucketName") String bucketName) {
-        return new ResponseEntity<>(minioUtils.createBucket(bucketName), HttpStatus.OK);
+    public ResponseEntity<String> createBucket() {
+        return new ResponseEntity<>(minioUtils.createBucket(), HttpStatus.OK);
     }
 }
