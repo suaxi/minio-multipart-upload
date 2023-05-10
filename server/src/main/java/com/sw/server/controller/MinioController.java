@@ -55,7 +55,7 @@ public class MinioController {
         boolean result = uploadService.mergeMultipartUpload(fileUploadInfo);
         //获取上传文件地址
         if (result) {
-            String filePath = uploadService.getFilePath(fileUploadInfo.getFileType().toLowerCase(), fileUploadInfo.getFileName());
+            String filePath = uploadService.getFilePath(fileUploadInfo.getFileName());
             return new ResponseEntity<>(filePath, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.OK);

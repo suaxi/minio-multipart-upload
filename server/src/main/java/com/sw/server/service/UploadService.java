@@ -1,6 +1,5 @@
 package com.sw.server.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sw.server.pojo.FileUploadInfo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,18 +34,16 @@ public interface UploadService {
      *
      * @param sha256 String
      * @return
-     * @throws JsonProcessingException
      */
-    List<Integer> getByFileSha256(String sha256) throws JsonProcessingException;
+    List<Integer> getByFileSha256(String sha256);
 
     /**
      * 获取文件地址
      *
-     * @param bucketName 桶名称
      * @param fileName   文件名
      * @return
      */
-    String getFilePath(String bucketName, String fileName);
+    String getFilePath(String fileName);
 
 
     /**

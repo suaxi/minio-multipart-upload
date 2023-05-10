@@ -1,6 +1,5 @@
 package com.sw.server.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sw.server.pojo.FileUploadInfo;
@@ -51,11 +50,11 @@ public class UploadServiceImpl implements UploadService {
     }
 
     @Override
-    public List<Integer> getByFileSha256(String sha256) throws JsonProcessingException {
+    public List<Integer> getByFileSha256(String sha256) {
         Object obj = redisUtils.get(sha256);
         FileUploadInfo fileUploadInfo = null;
         if (obj != null) {
-            fileUploadInfo = objectMapper.readValue(objectMapper.writeValueAsString(obj), new TypeReference<FileUploadInfo>() {
+            fileUploadInfo = objectMapper.convertValue(obj, new TypeReference<FileUploadInfo>() {
             });
         }
         if (fileUploadInfo == null) {
@@ -67,13 +66,13 @@ public class UploadServiceImpl implements UploadService {
     }
 
     @Override
-    public String getFilePath(String bucketName, String fileName) {
-        return minioUtils.getFilePath(bucketName, fileName);
+    public String getFilePath(String fileName) {
+        return minioUtils.getFilePath(fileName);
     }
 
     @Override
     public String upload(MultipartFile file, String bucketName) {
         minioUtils.upload(file, bucketName);
-        return this.getFilePath(bucketName, file.getName());
+        return this.getFilePath(file.getName());
     }
 }

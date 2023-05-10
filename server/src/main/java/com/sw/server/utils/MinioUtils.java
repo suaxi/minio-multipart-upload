@@ -1,6 +1,5 @@
 package com.sw.server.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.sw.server.config.CustomMinioClient;
 import com.sw.server.pojo.FileUploadInfo;
@@ -24,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author Wang Hao
@@ -48,9 +46,6 @@ public class MinioUtils {
 
     @Autowired
     private RedisUtils redisUtils;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private CustomMinioClient customMinioClient;
 
@@ -179,7 +174,7 @@ public class MinioUtils {
             fileUploadInfo.setUploadId(uploadId);
 
             //redis保存文件信息
-            redisUtils.set(fileUploadInfo.getFileMd5(), objectMapper.writeValueAsString(fileUploadInfo), 30, TimeUnit.MINUTES);
+            redisUtils.set(fileUploadInfo.getFileMd5(), fileUploadInfo, 30, TimeUnit.MINUTES);
 
             List<String> partList = new ArrayList<>();
             Map<String, String> reqParams = new HashMap<>(2);
@@ -253,12 +248,11 @@ public class MinioUtils {
     /**
      * 获取文件下载地址
      *
-     * @param bucketName 桶名称
      * @param fileName   文件名
      * @return
      */
-    public String getFilePath(String bucketName, String fileName) {
-        return endpoint + "/" + bucketName + "/" + fileName;
+    public String getFilePath(String fileName) {
+        return endpoint + "/" + bucket + "/" + fileName;
     }
 
 }

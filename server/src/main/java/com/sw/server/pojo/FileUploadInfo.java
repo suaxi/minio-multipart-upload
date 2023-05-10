@@ -2,7 +2,9 @@ package com.sw.server.pojo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,6 +13,8 @@ import java.io.Serializable;
  * @date 2023/5/3 16:10
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel("上传文件信息")
 public class FileUploadInfo implements Serializable {
 
