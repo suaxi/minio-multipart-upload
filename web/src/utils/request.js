@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const request = axios.create({
   baseURL: '/api',
@@ -7,12 +8,10 @@ const request = axios.create({
 
 request.interceptors.response.use(
   response => {
-    const res = response
-    if (res.status === 200) {
-      return res.data
-    }
+    return response.data
   },
   error => {
+    ElMessage.error(error.response.data.message)
     return Promise.reject(error)
   }
 )
