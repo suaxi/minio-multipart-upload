@@ -1,11 +1,6 @@
 <template>
   <div class="app">
-    <div style="display:none;">
-      <video id="upvideo" width="320" height="240" controls />
-    </div>
     <h2>分片上传示例</h2>
-    <el-button style="margin-left: 5px;" type="success" plain @click="handler">上传</el-button>
-    <el-button type="danger" plain @click="clearFileHandler">清空</el-button>
 
     <el-upload
       ref="upload"
@@ -18,10 +13,12 @@
       :auto-upload="false"
       multiple
     >
-      <el-button type="primary" plain>选择文件</el-button>
+      <template #trigger>
+        <el-button type="primary" plain>选择文件</el-button>
+      </template>
+      <el-button style="margin-left: 10px;" type="success" plain @click="handler">上传</el-button>
+      <el-button type="danger" plain @click="clearFileHandler">清空</el-button>
     </el-upload>
-
-    <img v-show="imgDataUrl" :src="imgDataUrl">
     <!-- 文件列表 -->
     <div class="file-list-wrapper">
       <el-collapse>
@@ -404,8 +401,11 @@ export default {
     }
 
     /**
-       * 文件分片
-       */
+     * 文件分片
+     * @param file
+     * @param size
+     * @returns {*[]}
+     */
     const createFileChunk = (file, size = chunkSize) => {
       const fileChunkList = []
       let count = 0
@@ -419,8 +419,10 @@ export default {
     }
 
     /**
-       * 处理即将上传的分片列表，判断是否有已上传的分片，有则从列表中删除
-       */
+     * 处理即将上传的分片列表，判断是否有已上传的分片，有则从列表中删除
+     * @param chunkList
+     * @returns {*}
+     */
     const processUploadChunkList = (chunkList) => {
       const currentFile = uploadFileList.value[currentFileIndex]
       const chunkUploadedList = currentFile.chunkUploadedList
@@ -439,6 +441,11 @@ export default {
       return chunkList
     }
 
+    /**
+     * 上传分片文件
+     * @param chunkList
+     * @returns {Promise<unknown>}
+     */
     const uploadChunkBase = (chunkList) => {
       let successCount = 0
       const totalChunks = chunkList.length
@@ -485,14 +492,28 @@ export default {
       })
     }
 
+    /**
+     * 获取文件上传地址
+     * @param fileParam
+     * @returns {Promise<axios.AxiosResponse<any>>}
+     */
     const getFileUploadUrls = (fileParam) => {
       return init(fileParam)
     }
 
+    /**
+     * 保存文件上传id
+     * @param data
+     */
     const saveFileUploadId = (data) => {
       localStorage.setItem(FILE_UPLOAD_ID_KEY, data)
     }
 
+    /**
+     * 上传校验
+     * @param md5
+     * @returns {Promise<unknown>}
+     */
     const checkFileUploadedByMd5 = (md5) => {
       return new Promise((resolve, reject) => {
         check(md5).then(response => {
@@ -504,6 +525,11 @@ export default {
       })
     }
 
+    /**
+     * 合并分片数据
+     * @param fileParam
+     * @returns {Promise<unknown>}
+     */
     const mergeFile = (fileParam) => {
       return new Promise((resolve, reject) => {
         merge(fileParam).then(response => {
@@ -526,8 +552,10 @@ export default {
     }
 
     /**
-       * 检查分片上传进度
-       */
+     * 检查分片上传进度
+     * @param item
+     * @returns {(function(*): void)|*}
+     */
     const checkChunkUploadProgress = (item) => {
       return p => {
         item.progress = parseInt(String((p.loaded / p.total) * 100))
@@ -535,6 +563,10 @@ export default {
       }
     }
 
+    /**
+     * 更新上传状态
+     * @param item
+     */
     const updateChunkUploadStatus = (item) => {
       let status = FileStatus.uploading
       let progressStatus = 'normal'
@@ -554,6 +586,9 @@ export default {
       getCurrentFileProgress()
     }
 
+    /**
+     * 获取文件上传进度
+     */
     const getCurrentFileProgress = () => {
       const currentFile = uploadFileList.value[currentFileIndex]
       if (!currentFile || !currentFile.chunkList) {
