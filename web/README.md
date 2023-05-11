@@ -1,5 +1,7 @@
 ## Multipart Upload Web
 
+Element-Plus 2.3.4
+
 ## Project setup
 ```
 npm install
