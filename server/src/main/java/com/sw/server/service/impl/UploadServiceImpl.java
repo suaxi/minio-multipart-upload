@@ -62,6 +62,7 @@ public class UploadServiceImpl implements UploadService {
         if (fileUploadInfo == null) {
             return null;
         }
+        //上传文件信息持久化存储到数据库之后，此处应该使用在附件表查询是否已有md5对应的文件的方式
         try {
             String bucketName = minioUtils.createBucket();
             ListPartsResponse listPartsResponse = minioUtils.getByFileSha256(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
