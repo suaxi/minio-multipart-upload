@@ -154,19 +154,17 @@ export default {
         // 检查是否已上传
         const checkResult = await checkFileUploadedByMd5(md5)
         // 确认上传状态
-        if (checkResult) {
-          if (checkResult.code === 1) {
-            ElMessage.success(`上传成功，文件地址：${checkResult}`)
-            console.log('文件访问地址：' + checkResult)
-            currentFile.status = FileStatus.success
-            currentFile.uploadProgress = 100
-            return
-          } else if (checkResult.code === 2) { // "上传中" 状态
-            // 获取已上传分片列表
-            currentFile.chunkUploadedList = checkResult.data
-          } else { // 未上传
-            console.log('未上传')
-          }
+        if (checkResult && checkResult.code === 1) {
+          currentFile.status = FileStatus.success
+          currentFile.uploadProgress = 100
+          ElMessage.success(`上传成功，文件地址：${checkResult.data}`)
+          console.log('文件访问地址：' + checkResult.data)
+          return
+        } else if (checkResult && checkResult.code === 2) { // "上传中" 状态
+          // 获取已上传分片列表
+          currentFile.chunkUploadedList = checkResult.data
+        } else { // 未上传
+          console.log('未上传')
         }
 
         // 创建分片
@@ -176,7 +174,7 @@ export default {
         const fileChunks = createFileChunk(currentFile.raw, chunkSize)
 
         // 重命名文件
-        const fileName = getNewFileName(currentFile)
+        const fileName = currentFile.name
 
         // 获取文件类型
         const type = currentFile.name.substring(currentFile.name.lastIndexOf('.') + 1)
