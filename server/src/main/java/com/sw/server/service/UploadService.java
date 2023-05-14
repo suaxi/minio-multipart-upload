@@ -35,7 +35,7 @@ public interface UploadService {
      * @param sha256 String
      * @return
      */
-    List<Integer> getByFileSha256(String sha256);
+    Map<String, Object> getByFileSha256(String sha256);
 
     /**
      * 获取文件地址

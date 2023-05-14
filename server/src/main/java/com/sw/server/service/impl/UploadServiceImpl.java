@@ -8,12 +8,12 @@ import com.sw.server.utils.MinioUtils;
 import com.sw.server.utils.RedisUtils;
 import io.minio.ListPartsResponse;
 import io.minio.messages.Part;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * @author Wang Hao
  * @date 2023/5/3 17:23
  */
+@Slf4j
 @Service
 public class UploadServiceImpl implements UploadService {
 
@@ -50,7 +51,8 @@ public class UploadServiceImpl implements UploadService {
     }
 
     @Override
-    public List<Integer> getByFileSha256(String sha256) {
+    public Map<String, Object> getByFileSha256(String sha256) {
+        Map<String, Object> result = new HashMap<>(2);
         Object obj = redisUtils.get(sha256);
         FileUploadInfo fileUploadInfo = null;
         if (obj != null) {
@@ -58,11 +60,20 @@ public class UploadServiceImpl implements UploadService {
             });
         }
         if (fileUploadInfo == null) {
-            return Collections.emptyList();
+            return null;
         }
-        String bucketName = minioUtils.createBucket();
-        ListPartsResponse listPartsResponse = minioUtils.getByFileSha256(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
-        return listPartsResponse.result().partList().stream().map(Part::partNumber).collect(Collectors.toList());
+        try {
+            String bucketName = minioUtils.createBucket();
+            ListPartsResponse listPartsResponse = minioUtils.getByFileSha256(fileUploadInfo.getFileName(), fileUploadInfo.getUploadId(), bucketName);
+            result.put("code", 2);
+            result.put("data", listPartsResponse.result().partList().stream().map(Part::partNumber).collect(Collectors.toList()));
+            return result;
+        } catch (Exception e) {
+            log.info("md5：[{}] 对应的文件已上传完成", sha256);
+            result.put("code", 1);
+            result.put("data", minioUtils.getFilePath(fileUploadInfo.getFileName()));
+            return result;
+        }
     }
 
     @Override
